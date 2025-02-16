@@ -1,0 +1,19 @@
+replicaCount: 1
+mysql:
+  databaseName: db_employee
+
+demoHelm:
+  image:
+    repository: demo-helm
+    pullPolicy: IfNotPresent
+    tag: latest
+
+mysqlVolume:
+  persistentVolumeClaim:
+    storageSize: 500Mi
+
+  persistentVolume:
+    storageSize: 500Mi
+    pathOnHost: /var/lib/mysql
+
+  mountPath: /var/lib/mysql
