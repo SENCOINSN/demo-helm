@@ -1,12 +1,5 @@
 version: '3.8'
 
-networks:
-  demo-net:
-    driver: bridge
-
-volumes:
-  mysql-data:
-
 services:
   mysql:
     image: mysql:latest
@@ -50,4 +43,10 @@ services:
       placement:
         constraints: [node.role == manager]
 
+networks:
+  demo-net:
+    name: demo-net
+
+volumes:
+  mysql-data:
   # Define a named volume for MySQL data persistence
