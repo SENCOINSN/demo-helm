@@ -1,5 +1,12 @@
 version: '3.8'
 
+networks:
+  demo-net:
+    driver: bridge
+
+volumes:
+  mysql-data:
+
 services:
   mysql:
     image: mysql:latest
@@ -13,7 +20,7 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql  # Volume configuration for MySQL data
     networks:
-      - demo-helm-network
+      - demo-net
     deploy:
       restart_policy:
         condition: on-failure
@@ -34,7 +41,7 @@ services:
       SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     networks:
-      - demo-helm-network
+      - demo-net
     deploy:
       restart_policy:
         condition: on-failure
@@ -43,9 +50,4 @@ services:
       placement:
         constraints: [node.role == manager]
 
-networks:
-  demo-helm-network:
-    driver: bridge
-
-volumes:
-  mysql-data:  # Define a named volume for MySQL data persistence
+  # Define a named volume for MySQL data persistence
