@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql-container-helm
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      #      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql  # Volume configuration for MySQL data
+    networks:
+      - demo-helm-network
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+
+  demo-helm:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: demo-helm
+    depends_on:
+      - mysql
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?createDatabaseIfNotExist=true&characterEncoding=UTF-8&useUnicode=true&useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    networks:
+      - demo-helm-network
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+networks:
+  demo-helm-network:
+    driver: bridge
+
+volumes:
+  mysql-data:  # Define a named volume for MySQL data persistence
