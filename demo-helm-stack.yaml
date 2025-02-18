@@ -3,7 +3,6 @@ version: '3.8'
 services:
   mysql:
     image: mysql:latest
-    container_name: mysql-container-helm
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -25,10 +24,7 @@ services:
 
 
   demo-helm:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: demo-helm
+    image: ghcr.io/sencoinsn/demo-helm:v1
     depends_on:
       - mysql
     ports:
